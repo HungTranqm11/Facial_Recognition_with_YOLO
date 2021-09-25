@@ -64,8 +64,8 @@ while True:
                 height = int(detection[3] * frame_height)
                 
                             # Find the top left point of the bounding box 
-                topleft_x = center_x - width / 2  #YOUR CODE HERE
-                topleft_y =  center_y - height / 2 #YOUR CODE HERE
+                topleft_x = int(center_x - width / 2)  #YOUR CODE HERE
+                topleft_y = int(center_y - height / 2) #YOUR CODE HERE
                 confidences.append(float(confidence))
                 boxes.append([topleft_x, topleft_y, width, height])
 
@@ -96,6 +96,7 @@ while True:
         ### YOUR CODE HERE
         
         cv2.rectangle(result, (int(topleft_x), int(topleft_y)), (int(bottomright_x), int(bottomright_y)), (255,0,0), 2)
+        face = result[topleft_y:bottomright_y, topleft_x:bottomright_x]
         print((int(topleft_x), int(topleft_y))) 
         print((int(bottomright_y), int(bottomright_x)))
         # Display text about confidence rate above each box
@@ -109,6 +110,10 @@ while True:
 		# Break when pressing ESC
     if c == 27:
         break
+    elif c == 83:
+        cv2.imwrite('YOLO_bdb.jpg', face)
+        break
 cap.release()
 cv2.destroyAllWindows()
+
 
