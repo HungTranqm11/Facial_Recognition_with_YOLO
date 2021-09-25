@@ -101,6 +101,8 @@ while True:
         print((int(bottomright_y), int(bottomright_x)))
         # Display text about confidence rate above each box
         text = f'{confidences[i]:.2f}'
+        cv2.putText(result, text, (int(topleft_x) - 10, int(topleft_y) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 
+        color=(255,255,255), thickness=2)
         ### YOUR CODE HERE
 
     # Display text about number of detected faces on topleft corner
