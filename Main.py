@@ -1,5 +1,10 @@
 import cv2
 import matplotlib.pyplot as plt
+import time
+import tensorflow as tf
+import keras
+import numpy as np
+
 
 MODEL = 'D:\Python\ML\YOLO\yolov3-face.cfg'
 WEIGHT = 'D:\Python\ML\YOLO\yolov3-wider_16000.weights'
@@ -9,6 +14,14 @@ net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 IMG_WIDTH, IMG_HEIGHT = 416, 416
 
 cap = cv2.VideoCapture(0)
+prev_frame_time = 0
+ 
+# used to record the time at which we processed current frame
+new_frame_time = 0
+base_name = 'YOLO_image'
+flag_1 = time.time()
+flag_2 = time.time()
+count = 0
 
 # Check if the webcam is opened correctly
 if not cap.isOpened():
@@ -16,9 +29,31 @@ if not cap.isOpened():
 
 while True:
     ret, frame = cap.read()
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    # time when we finish processing for this frame
+    # new_frame_time = time.time()
+ 
+    # # Calculating the fps
+ 
+    # # fps will be number of frame processed in given time frame
+    # # since their will be most of time error of 0.001 second
+    # # we will be subtracting it to get more accurate result
+    # fps = int(cap.get(cv2.CAP_PROP_FPS))
+    # # print(fps)
+    # # fps = 1/(new_frame_time-prev_frame_time)
+    # # prev_frame_time = new_frame_time
+ 
+    # # converting the fps into integer
+    # # fps = int(fps)
+ 
+    # # converting the fps to string so that we can display it on frame
+    # # by using putText function
+    # # fps = str(fps)
+
+    # # putting the FPS count on the frame
+    # cv2.putText(frame, str(fps), (7, 70), font, 3, (100, 255, 0), 3, cv2.LINE_AA)
 
     # frame is now the image capture by the webcam (one frame of the video)
-    # cv2.imshow('Input', frame)
     # Making blob object from original image
     blob = cv2.dnn.blobFromImage(frame, 
                                 1/255, (IMG_WIDTH, IMG_HEIGHT),
@@ -96,9 +131,9 @@ while True:
         ### YOUR CODE HERE
         
         cv2.rectangle(result, (int(topleft_x), int(topleft_y)), (int(bottomright_x), int(bottomright_y)), (255,0,0), 2)
-        face = result[topleft_y:bottomright_y, topleft_x:bottomright_x]
-        print((int(topleft_x), int(topleft_y))) 
-        print((int(bottomright_y), int(bottomright_x)))
+        face = frame[topleft_y:bottomright_y, topleft_x:bottomright_x]
+        # print((int(topleft_x), int(topleft_y))) 
+        # print((int(bottomright_y), int(bottomright_x)))
         # Display text about confidence rate above each box
         text = f'{confidences[i]:.2f}'
         cv2.putText(result, text, (int(topleft_x) - 10, int(topleft_y) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 
@@ -112,6 +147,14 @@ while True:
 		# Break when pressing ESC
     if c == 27:
         break
+        # Break when pressing ESC
+    flag_1 = time.time()
+    if flag_1 - flag_2 >3:
+        cv2.imwrite('D:\Python\ML\YOLO\sample'+ base_name + str(count)+'.jpg', face)
+        count +=1
+        flag_2 = flag_1
+        if count == 100:
+            break
     elif c == 83:
         cv2.imwrite('YOLO_bdb.jpg', face)
         break
@@ -119,3 +162,4 @@ cap.release()
 cv2.destroyAllWindows()
 
 
+# 
